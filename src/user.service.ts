@@ -104,7 +104,7 @@ export class UserService {
 
       // Create Organisation
       const orgObj = {
-        name: `${toTitleCase(firstName)}'s Organisation'`,
+        name: `${toTitleCase(firstName)}'s Organisation`,
         description: `An organisation for ${toTitleCase(firstName + ' ' + lastName)}`,
       };
 
