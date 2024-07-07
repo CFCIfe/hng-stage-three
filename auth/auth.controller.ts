@@ -72,6 +72,7 @@ export class AuthController {
   }
 
   @Post('/organisations/:id/users')
+  @UseGuards(JwtAuthGuard)
   async addUserToOrganisation(
     @Req() req: AuthenticatedRequest,
     @Param('orgId') orgId: string,
