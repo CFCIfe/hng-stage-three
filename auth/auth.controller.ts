@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   HttpStatus,
   Param,
   Post,
@@ -71,10 +72,9 @@ export class AuthController {
     return await this.authService.createOrganisation(userId, name, description);
   }
 
-  @Post('/organisations/:id/users')
-  @UseGuards(JwtAuthGuard)
+  @Post('/organisations/:orgId/users')
+  @HttpCode(200)
   async addUserToOrganisation(
-    @Req() req: AuthenticatedRequest,
     @Param('orgId') orgId: string,
     @Body() body: { userId: string },
   ): Promise<any> {
