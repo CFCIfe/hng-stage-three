@@ -9,6 +9,7 @@ import {
   Post,
   Req,
   UnauthorizedException,
+  UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
 import { UserDataDto } from '../src/dto/user.dto';
@@ -74,6 +75,7 @@ export class AuthController {
 
   @Post('/organisations/:orgId/users')
   @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
   async addUserToOrganisation(
     @Param('orgId') orgId: string,
     @Body() body: { userId: string },
@@ -81,10 +83,10 @@ export class AuthController {
     const { userId } = body;
 
     if (!userId) {
-      throw new BadRequestException({
-        status: 'Bad Request',
-        message: 'Client error',
-        statusCode: HttpStatus.BAD_REQUEST,
+      throw new UnprocessableEntityException({
+        status: 'Error',
+        message: 'User ID is required',
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
     }
 
