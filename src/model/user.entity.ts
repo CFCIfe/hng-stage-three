@@ -30,7 +30,7 @@ export class User extends Base {
   @Column({ nullable: true })
   phone: string;
 
-  @ManyToMany(() => Organisation, (organisation) => organisation.users)
+  @ManyToMany(() => Organisation, (organisation) => organisation.users, {onDelete: 'CASCADE'})
   organisations: Organisation[];
 }
 
@@ -46,7 +46,7 @@ export class Organisation extends Base {
   @Column({ nullable: true })
   description: string;
 
-  @ManyToMany(() => User, (user) => user.organisations)
+  @ManyToMany(() => User, (user) => user.organisations, {onDelete: 'CASCADE'})
   @JoinTable({
     name: 'user_organisation',
     joinColumn: { name: 'orgId', referencedColumnName: 'orgId' },

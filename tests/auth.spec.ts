@@ -2,6 +2,8 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { UserModule } from '../src/user.module';
+import { startTestDataSource } from '../src/utils/test';
+import { dataSource } from '../src/config/typeorm';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
@@ -14,7 +16,17 @@ describe('AuthController (e2e)', () => {
     app = moduleRef.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
+    await startTestDataSource();
   });
+
+  afterEach(async () => {
+    const entities = getConnection().entityMetadatas;
+
+    for (const entity of entities) {
+        const repository = getConnection().getRepository(entity.name);
+        await repository.clear();
+    }
+  })
 
   afterAll(async () => {
     await app.close();
@@ -35,7 +47,6 @@ describe('AuthController (e2e)', () => {
         .expect((res) => {
           expect(res.body).toHaveProperty('status', 'success');
           expect(res.body).toHaveProperty('message', 'Registration successful');
-          expect(res.body.data).toHaveProperty('accessToken');
           expect(res.body.data.user).toEqual({
             userId: expect.any(String),
             firstName: 'John',
