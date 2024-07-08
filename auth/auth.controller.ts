@@ -75,7 +75,6 @@ export class AuthController {
 
   @Post('/organisations/:orgId/users')
   @HttpCode(200)
-  @UseGuards(JwtAuthGuard)
   async addUserToOrganisation(
     @Param('orgId') orgId: string,
     @Body() body: { userId: string },
@@ -83,11 +82,19 @@ export class AuthController {
     const { userId } = body;
 
     if (!userId) {
-      throw new UnprocessableEntityException({
+      throw new BadRequestException({
         status: 'Error',
         message: 'User ID is required',
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        statusCode: 400,
       });
+    }
+
+    if(!orgId) {
+      throw new BadRequestException({
+        status: 'Error',
+        message: 'User ID is required',
+        statusCode: 400
+      })
     }
 
     return await this.authService.addUserToOrganisation(orgId, userId);

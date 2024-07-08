@@ -134,7 +134,6 @@ export class AuthService {
   }
 
   async addUserToOrganisation(orgId: string, userId: string): Promise<any> {
-    // return Unprocessable Content when the orgId is not a valid UUID
 
     if (!isUUID(orgId)) {
       throw new UnprocessableEntityException({
@@ -161,6 +160,11 @@ export class AuthService {
         message: 'Organisation not found',
       });
     }
+
+    if (organisation.users.find(user => user.userId === userId)) {
+      throw new BadRequestException('User already exists in organisation');
+    }
+
 
     const user = await this.userRepository.findOne({ where: { userId } });
 
