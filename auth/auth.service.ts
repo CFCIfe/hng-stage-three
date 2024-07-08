@@ -2,8 +2,10 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { isUUID } from 'src/utils/helperFunctions';
 import { Repository } from 'typeorm';
 import { UserDataDto } from '../src/dto/user.dto';
 import { Organisation, User } from '../src/model/user.entity';
@@ -132,19 +134,41 @@ export class AuthService {
   }
 
   async addUserToOrganisation(orgId: string, userId: string): Promise<any> {
+    // return Unprocessable Content when the orgId is not a valid UUID
+
+    if (!isUUID(orgId)) {
+      throw new UnprocessableEntityException({
+        status: 'error',
+        message: 'Invalid organisation ID',
+      });
+    }
+
+    if (!isUUID(userId)) {
+      throw new UnprocessableEntityException({
+        status: 'error',
+        message: 'Invalid user ID',
+      });
+    }
+
     const organisation = await this.organisationRepository.findOne({
       where: { orgId },
       relations: ['users'],
     });
 
     if (!organisation) {
-      throw new NotFoundException('Organisation not found');
+      throw new UnprocessableEntityException({
+        status: 'error',
+        message: 'Organisation not found',
+      });
     }
 
     const user = await this.userRepository.findOne({ where: { userId } });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new UnprocessableEntityException({
+        status: 'error',
+        messsage: 'User not found',
+      });
     }
 
     organisation.users.push(user);

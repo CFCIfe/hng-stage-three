@@ -23,3 +23,10 @@ export function toTitleCase(str: string) {
     (text) => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase(),
   );
 }
+
+export function isUUID(str) {
+  if (str.length !== 36) {
+    return false;
+  }
+  return true;
+}
